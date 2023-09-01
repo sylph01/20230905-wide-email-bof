@@ -80,6 +80,16 @@ Envelope FromとHeader Fromの一致取るのってどこに記述あるんだ�
 
 ----
 
+# ところでDMARCは何を解決するの？
+
+DMARC（をはじめとするドメイン認証技術）は **spoofing problemを解決する** のであって **spam problemを解決するのではない。**
+
+これは常時HTTPS化がphishingを解決するのではないのと似ている。phishing siteはHTTPS化してくるし、spammerはSPF/DKIM/DMARCすべてをPASSするspamを送ってくる。
+
+"DMARC solves **direct domain abuse**, not spam"
+
+----
+
 # `p=reject` って何
 
 https://datatracker.ietf.org/doc/html/rfc7489#section-6.3
@@ -109,6 +119,10 @@ https://en.wikipedia.org/wiki/DMARC
 
 ----
 
+# 「『`p=reject` でinteroperability problem引いたことない』は『私はタバコを50年吸ってるけどまだ死んでないぞ』」と同じ
+
+----
+
 # DMARCにおけるmailing list problem
 
 ----
@@ -127,7 +141,16 @@ https://en.wikipedia.org/wiki/DMARC
 
 ----
 
-# 個人的には
+# 個人的には(1)
+
+- `p=reject` についてno changesはナシ
+  - せめてinteroperability considerationsに何か書いておかないと、メーリングリストで事故を起こすことはそんなに自明ではない
+  - ちゃんとRFC読んでない誰かに唆されて `p=reject` にして問題起こす、が起こりうる
+    - セキュリティチェックシートの指摘で `p=reject` じゃないのなんでですか、みたいな…
+
+----
+
+# 個人的には(2)
 
 - DKIMのほうがsenderについてより強い保証してるのでDKIM PASSを信用すべきと思う。メーリングリストについても送信者の真正性の検証にはDKIMで十分
   - 一方でメーリングリストではDKIM replay attack…ｳｯ頭が…
