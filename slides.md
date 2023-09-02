@@ -115,19 +115,9 @@ DMARC WGはこのあとに結成されている。WGの歴史的に抱えるト�
 <!--
 日本語Googleで'dmarc yahoo p=reject'で検索するとYahoo! Japanの最近の取り組みしか出てこない、なので英語版Wikipediaにある事実の記述を確認した。
 https://en.wikipedia.org/wiki/DMARC
+
+ちなみにGmailはp=rejectでも実はrejectしない。これは別にRFC違反ではない。代わりに「〜経由」であると表示する。
 -->
-
-----
-
-# 「『`p=reject` でinteroperability problem引いたことない』は『私はタバコを50年吸ってるけどまだ死んでないぞ』と同じ」
-
-----
-
-# DMARCにおけるmailing list problem
-
-----
-
-# ARC
 
 ----
 
@@ -138,6 +128,60 @@ https://en.wikipedia.org/wiki/DMARC
   - 5.1 Determine Whether the Email Should Be Signed and by Whom
 - これらがalignしないことがありうる
 - メーリングリストとかだと SPF FAIL の DKIM PASS はよくある
+
+----
+
+# 「『`p=reject` でinteroperability problem引いたことない』は『私はタバコを50年吸ってるけどまだ死んでないぞ』と同じ」
+
+----
+
+# DMARCにおけるmailing list problem
+
+- メーリングリストにおいては
+  - 必然的にEnvelope FROMとHeader FROMは不一致になる
+  - DKIMの検証ドメイン名とHeader FROMは一致するが、SPFのvalidation domainとHeader FROMのドメイン名が一致しないことがある
+
+----
+
+![](spf1.png)
+
+Gmailにおいては `p=reject` を指定しているドメイン名でもSMTPレイヤーでrejectはせず、「〜経由」と表示するようにしている。mailing list problemを考慮しているため？
+
+<!-- メール選択に他意はなく、たまたまwideのメーリングリストに来てるやつをサンプルにしただけです -->
+
+----
+
+![](spf2.png)
+
+----
+
+![](spf3.png)
+
+- SPFの検証ドメイン名は `wide.ad.jp`
+- DMARCの見るHeader FROMは `@keio.jp`
+- よって **厳密にはDMARC FAIL!**
+
+----
+
+# ARC
+
+メーリングリストのようなintermediate handlerがそれぞれの検証結果を順番付きで添付することによって、最終受信者が本来意図した通りの検証結果を利用できるようにしたもの。
+
+すっごく雑に言うとintermediate handlerがDKIMをチェーンすることでDKIMが転送されたときに壊れることを防ぐ。
+
+----
+
+![](arc.png)
+
+----
+
+- `ARC-Message-Signature`: ほぼフォーマットがDKIMなことに注意
+  - `i=1`: ARCチェーンの1個目であることを示す。
+  - `d=google.com`, `s=arc-20160816`: DKIMと同様に、ドメインとその鍵識別子を示す。
+- これを付与した上で `ARC-Seal` が `ARC-Message-Signature` と `ARC-Authentication-Results` の内容に署名している
+  - SPFとDKIMの上に署名して、次の検証者が確信を持ってその値を使うことができるようにしている
+- 理想的にはメーリングリストが検証したARCをさらにGmailのMTAが検証して…みたいにしたい
+  - がまともにARCを実装しているMTAなんてGmailくらいしか存在しない（要出典）
 
 ----
 
@@ -164,6 +208,7 @@ https://en.wikipedia.org/wiki/DMARC
 
 - [SPF (RFC 7208)](https://datatracker.ietf.org/doc/html/rfc7208)
 - [DKIM (RFC 6376)](https://datatracker.ietf.org/doc/html/rfc6376)
+  - [Message Header Field for Indicating Message Authentication Status (RFC 8601)](https://datatracker.ietf.org/doc/html/rfc8601)
 - [DMARC (RFC 7489)](https://datatracker.ietf.org/doc/html/rfc7489)
 - [ARC (RFC 8617)](https://datatracker.ietf.org/doc/html/rfc8617)
 - [Experimental Domain-Based Message Authentication, Reporting, and Conformance (DMARC) Extension for Public Suffix Domains (RFC 9091)](https://datatracker.ietf.org/doc/html/rfc9091)
