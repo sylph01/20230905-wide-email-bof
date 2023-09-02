@@ -119,7 +119,7 @@ https://en.wikipedia.org/wiki/DMARC
 
 ----
 
-# 「『`p=reject` でinteroperability problem引いたことない』は『私はタバコを50年吸ってるけどまだ死んでないぞ』」と同じ
+# 「『`p=reject` でinteroperability problem引いたことない』は『私はタバコを50年吸ってるけどまだ死んでないぞ』と同じ」
 
 ----
 
