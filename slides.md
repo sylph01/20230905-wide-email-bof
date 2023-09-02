@@ -162,7 +162,7 @@ https://en.wikipedia.org/wiki/DMARC
 
 # 便利リンク集
 
-- [SPF (RFC 7208)](https://datatracker.ietf.org/doc/html/rfc720)
+- [SPF (RFC 7208)](https://datatracker.ietf.org/doc/html/rfc7208)
 - [DKIM (RFC 6376)](https://datatracker.ietf.org/doc/html/rfc6376)
 - [DMARC (RFC 7489)](https://datatracker.ietf.org/doc/html/rfc7489)
 - [ARC (RFC 8617)](https://datatracker.ietf.org/doc/html/rfc8617)
