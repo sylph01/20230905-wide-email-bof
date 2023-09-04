@@ -167,8 +167,6 @@ Gmailにおいては `p=reject` を指定しているドメイン名でもSMTP�
 
 メーリングリストのようなintermediate handlerがそれぞれの検証結果を順番付きで添付することによって、最終受信者が本来意図した通りの検証結果を利用できるようにしたもの。
 
-すっごく雑に言うとintermediate handlerがDKIMをチェーンすることでDKIMが転送されたときに壊れることを防ぐ。
-
 ----
 
 ![](arc.png)
@@ -182,6 +180,17 @@ Gmailにおいては `p=reject` を指定しているドメイン名でもSMTP�
   - SPFとDKIMの上に署名して、次の検証者が確信を持ってその値を使うことができるようにしている
 - 理想的にはメーリングリストが検証したARCをさらにGmailのMTAが検証して…みたいにしたい
   - がまともにARCを実装しているMTAなんてGmailくらいしか存在しない（要出典）
+
+----
+
+# メーリングリストにおける期待するARCの挙動
+
+先ほどの例（`keio.jp` -> `wide.ad.jp` -> `google.com`）の場合
+
+- `keio.jp` のDKIM署名が載ってくる
+- `wide.ad.jp` が `keio.jp` のSPFとDKIMを検証し `ARC-Authentication-Results` を付与、その上で `ARC-Message-Signature` を付与、 `ARC-Seal` でsealする。これで `i=1`
+- `google.com` が `wide.ad.jp` のSPFを検証して `i=2` の `ARC-Authentication-Results` を付与、また `i=1` の `ARC-Seal` を検証し、 `i=2` の `ARC-Seal` を付与
+- 受信したユーザーは `i=1` と `i=2` の `ARC-Seal` を検証する
 
 ----
 
@@ -200,7 +209,21 @@ Gmailにおいては `p=reject` を指定しているドメイン名でもSMTP�
   - 一方でメーリングリストではDKIM replay attack…ｳｯ頭が…
   - [DKIM Replayについては2023/3にProblem StatementのI-Dが出ている](https://www.ietf.org/id/draft-crocker-dkim-replay-00.html)
 - メーリングリスト + DMARCを本格的にやろうと思ったらARCがもっと実装されてる必要があるけど実際にGmailくらいしかやってないよね？
+  - ARCがまともに実装されていればDMARCからSPFをdropするなんてことをしなくてもよい
 - ~~みんなまともに実装できてないんだしSMTPやめない？~~
+
+----
+
+# ARC、運用してみる？
+
+論文になるほどの新規性はない気はするが
+
+そもそもOSS実装、ある？
+
+<!--
+https://github.com/halon-extras/arc
+Halon scriptで書かれた実装はあるけど…
+-->
 
 ----
 
