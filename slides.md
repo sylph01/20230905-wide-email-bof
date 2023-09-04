@@ -29,9 +29,9 @@ theme: argent
 
 `https://github.com/sylph01/20230905-wide-email-bof`
 
-
 ![bg right:40% contain](github-20230905.png)
 
+## 「WIDEネタ」相当はありません（IETFのNote Wellに準拠）
 
 ----
 
