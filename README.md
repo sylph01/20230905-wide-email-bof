@@ -1,6 +1,5 @@
-# Argent: a Marp theme
+# 20230905-wide-email-bof
 
 ## How to use
 
-- Copy all files into a new directory
 - run `npx @marp-team/marp-cli slides.md`
